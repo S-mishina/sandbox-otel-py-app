@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: sandbox-app
-        image: gcr.io/PROJECT_ID/sandbox-app:latest
+        image: ghcr.io/s-mishina/test-otel-app:latest
         ports:
         - containerPort: 8080
       env:
@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
       - name: sandbox-app1
-        image: gcr.io/PROJECT_ID/sandbox-app1:latest
+        image: ghcr.io/s-mishina/test-otel-app:latest
         ports:
         - containerPort: 8080
       env:
