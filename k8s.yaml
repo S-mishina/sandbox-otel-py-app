@@ -1,0 +1,84 @@
+# yaml
+apiVersion: v1
+kind: deployment
+metadata:
+  name: sandbox-app
+  labels:
+    app: sandbox-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sandbox-app
+  template:
+    metadata:
+      labels:
+        app: sandbox-app
+    spec:
+      containers:
+      - name: sandbox-app
+        image: gcr.io/PROJECT_ID/sandbox-app:latest
+        ports:
+        - containerPort: 8080
+      env:
+      - name: HTTP_FLG
+        value: "false"
+      - name: API_URL
+        value: "dummy"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox-app
+  labels:
+    app: sandbox-app
+spec:
+  selector:
+    app: sandbox-app
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: v1
+kind: deployment
+metadata:
+  name: sandbox-app1
+  labels:
+    app: sandbox-app1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sandbox-app1
+  template:
+    metadata:
+      labels:
+        app: sandbox-app1
+    spec:
+      containers:
+      - name: sandbox-app1
+        image: gcr.io/PROJECT_ID/sandbox-app1:latest
+        ports:
+        - containerPort: 8080
+      env:
+      - name: HTTP_FLG
+        value: "false"
+      - name: API_URL
+        value: "dummy"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sandbox-app1
+  labels:
+    app: sandbox-app1
+spec:
+  selector:
+    app: sandbox-app1
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
+  type: ClusterIP
