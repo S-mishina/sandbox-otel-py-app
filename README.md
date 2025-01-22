@@ -6,7 +6,7 @@ A tool for simple verification of the connection of otel traces.
 
 * This tool imports otel but does not have it as a package.
 * When using this tool, it is assumed that the auto Integration function is used.[link](https://opentelemetry.io/docs/kubernetes/operator/automatic/)
-* If auto-instrumentation is not available in your environment, you will need to install the package because it is an init container.
+* If auto-instrumentation is not available, the package must be installed using an init container or other means.
 
 ## sample
 
