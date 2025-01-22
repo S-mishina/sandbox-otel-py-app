@@ -115,3 +115,7 @@ spec:
 If you run this and send a request to sandbox-app, you can see the trace connection of sandbox-app -> sandbox-app1.
 
 If the traces do not connect, you can check for possible problems in the collector configuration.
+
+## At the time of use
+
+TBU
