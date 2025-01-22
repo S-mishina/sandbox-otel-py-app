@@ -6,6 +6,11 @@ on:
 
 jobs:
   deploy:
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
