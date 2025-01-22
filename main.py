@@ -5,11 +5,14 @@ import os
 import requests
 import json
 import logging
-from opentelemetry import trace
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
-from opentelemetry.propagate import set_global_textmap
-from opentelemetry.propagators.b3 import B3MultiFormat
-from opentelemetry.sdk.trace import TracerProvider
+if os.getenv("OTEL_TRACES_EXPORTER"):
+  from opentelemetry import trace
+  from opentelemetry.instrumentation.flask import FlaskInstrumentor
+  from opentelemetry.propagate import set_global_textmap
+  from opentelemetry.propagators.b3 import B3MultiFormat
+  from opentelemetry.sdk.trace import TracerProvider
+else:
+  logging.info("OTEL_TRACES_EXPORTER is not set. Tracing will not be enabled.")
 
 app = Flask(__name__)
 # FlaskInstrumentor().instrument_app(app)
