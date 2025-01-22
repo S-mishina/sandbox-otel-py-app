@@ -5,8 +5,14 @@ import os
 import requests
 import json
 import logging
+from opentelemetry import trace
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.propagate import set_global_textmap
+from opentelemetry.propagators.b3 import B3MultiFormat
+from opentelemetry.sdk.trace import TracerProvider
 
 app = Flask(__name__)
+# FlaskInstrumentor().instrument_app(app)
 
 @app.route('/')
 def index():
@@ -17,6 +23,10 @@ def index():
     else:
         logging.info("HTTP_FLG is not true")
     return jsonify({'message': 'Hello, World!'})
+
+@app.route('/health')
+def health():
+    return jsonify({'status': 'UP'})
 
 def request_api():
     url = os.getenv("API_URL","localhost:80")
@@ -30,7 +40,5 @@ def request_api():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    app.run(host='0.0.0.0', port=8080)
-    debug=True
-
+    app.run(host="0.0.0.0",port=8080, debug=True, use_reloader=False)
 
