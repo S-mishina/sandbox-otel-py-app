@@ -19,6 +19,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    logging.info("Request headers")
+    logging.info(request.headers)
     if os.getenv("HTTP_FLG") == "true":
         logging.info("HTTP_FLG is true")
         response = request_api()
