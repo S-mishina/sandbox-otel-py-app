@@ -5,6 +5,7 @@ import os
 import requests
 import json
 import logging
+from joblib import Parallel, delayed
 if os.getenv("OTEL_TRACES_EXPORTER"):
   from opentelemetry import trace
   from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -23,8 +24,14 @@ def index():
     logging.info(request.headers)
     if os.getenv("HTTP_FLG") == "true":
         logging.info("HTTP_FLG is true")
-        response = request_api()
-        logging.info(response)
+        request_count = int(os.getenv("REQUESTCOUNT", 1))
+        logging.info(f"Request count is {request_count}")
+        try:
+            results = Parallel(n_jobs=request_count)(delayed(request_api)() for _ in range(request_count))
+            logging.info(f"Parallel results: {results}")
+        except Exception as e:
+            logging.error(f"Error during parallel requests: {e}")
+            pass
     else:
         logging.info("HTTP_FLG is not true")
     return jsonify({'message': 'Hello, World!'})
@@ -41,6 +48,7 @@ def request_api():
         return {"error": "API_URL is invalid and points to itself"}
     logging.info(f"Making a request to {url}")
     response = requests.get(url)
+    logging.info(response)
     return response
 
 if __name__ == '__main__':
