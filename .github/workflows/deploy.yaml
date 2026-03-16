@@ -7,9 +7,9 @@ on:
 
 jobs:
   deploy:
-    uses: S-mishina/reusable-workflows/.github/workflows/docker-build-push.yml@main
-    with:
-      image-name: s-mishina/test-otel-app
     permissions:
       contents: read
       packages: write
+    uses: S-mishina/reusable-workflows/.github/workflows/docker-build-push.yml@main
+    with:
+      image-name: s-mishina/test-otel-app
