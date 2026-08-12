@@ -40,6 +40,17 @@ def index():
 def health():
     return jsonify({'status': 'UP'})
 
+def get_id_token(audience):
+    # GCE/Cloud Run のメタデータサーバーから、audience 向けの ID Token を取得する。
+    # https://cloud.google.com/run/docs/authenticating/service-to-service
+    metadata_url = (
+        "http://metadata.google.internal/computeMetadata/v1/"
+        f"instance/service-accounts/default/identity?audience={audience}"
+    )
+    response = requests.get(metadata_url, headers={"Metadata-Flavor": "Google"})
+    response.raise_for_status()
+    return response.text
+
 def request_api():
     url = os.getenv("API_URL","localhost:80")
     logging.info(f"API_URL is set to {url}")
@@ -47,7 +58,17 @@ def request_api():
         logging.error("API_URL points to the local server itself. Aborting to avoid infinite loop.")
         return {"error": "API_URL is invalid and points to itself"}
     logging.info(f"Making a request to {url}")
-    response = requests.get(url)
+    headers = {}
+    # USE_ID_TOKEN=true の場合のみ、Cloud Run 等の roles/run.invoker で保護された
+    # 呼び出し先向けに ID Token を付与する（デフォルトは既存動作のまま無認証リクエスト）。
+    if os.getenv("USE_ID_TOKEN") == "true":
+        try:
+            token = get_id_token(url)
+            headers["Authorization"] = f"Bearer {token}"
+            logging.info("Attached ID token to the request")
+        except Exception as e:
+            logging.error(f"Failed to fetch ID token: {e}")
+    response = requests.get(url, headers=headers)
     logging.info(response)
     return response
 
